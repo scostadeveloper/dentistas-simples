@@ -158,7 +158,7 @@ const Contact = () => {
                   <Calendar className="w-4 h-4" />
                   <span>Agendar via WhatsApp</span>
                 </Button>
-                <Button variant="outline" className="w-full border-white text-white hover:bg-white hover:text-dental-primary flex items-center justify-center space-x-2">
+                <Button variant="outline" className="w-full bg-white text-dental-primary hover:bg-gray-100 flex items-center justify-center space-x-2">
                   <MessageCircle className="w-4 h-4" />
                   <span>Chat Online</span>
                 </Button>
