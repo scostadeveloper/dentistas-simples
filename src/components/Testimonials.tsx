@@ -1,8 +1,9 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Star, Quote } from 'lucide-react';
 
 const Testimonials = () => {
+  const [isImageLoaded, setIsImageLoaded] = useState<boolean[]>(Array(6).fill(false));
+
   const testimonials = [
     {
       name: 'Maria Silva',
@@ -48,12 +49,28 @@ const Testimonials = () => {
     }
   ];
 
+  const handleImageLoad = (index: number) => {
+    setIsImageLoaded(prev => {
+      const newState = [...prev];
+      newState[index] = true;
+      return newState;
+    });
+  };
+
   return (
-    <section id="depoimentos" className="py-20 bg-gradient-to-br from-dental-light/30 to-white">
+    <section 
+      id="depoimentos" 
+      className="py-20 bg-gradient-to-br from-dental-light/30 to-white"
+      aria-label="Depoimentos dos pacientes"
+    >
       <div className="container mx-auto px-4">
         {/* Header */}
-        <div className="text-center mb-16">
-          <div className="inline-block bg-dental-accent/10 text-dental-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
+        <div className="text-center mb-16 animate-fade-in">
+          <div 
+            className="inline-block bg-dental-accent/10 text-dental-primary px-4 py-2 rounded-full text-sm font-medium mb-6"
+            role="status"
+            aria-label="Seção de depoimentos"
+          >
             DEPOIMENTOS
           </div>
           <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
@@ -73,15 +90,25 @@ const Testimonials = () => {
           {testimonials.map((testimonial, index) => (
             <div
               key={index}
-              className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-dental-accent/30 relative group hover:-translate-y-1"
+              className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-dental-accent/30 relative group hover:-translate-y-1 animate-slide-up"
+              style={{ animationDelay: `${index * 100}ms` }}
+              role="article"
+              aria-label={`Depoimento de ${testimonial.name}`}
             >
               {/* Quote Icon */}
-              <div className="absolute -top-4 left-6 w-8 h-8 bg-gradient-to-r from-dental-primary to-dental-secondary rounded-full flex items-center justify-center">
+              <div 
+                className="absolute -top-4 left-6 w-8 h-8 bg-gradient-to-r from-dental-primary to-dental-secondary rounded-full flex items-center justify-center"
+                aria-hidden="true"
+              >
                 <Quote className="w-4 h-4 text-white" />
               </div>
 
               {/* Rating */}
-              <div className="flex items-center space-x-1 mb-4 mt-2">
+              <div 
+                className="flex items-center space-x-1 mb-4 mt-2"
+                role="img"
+                aria-label={`${testimonial.rating} de 5 estrelas`}
+              >
                 {[...Array(testimonial.rating)].map((_, i) => (
                   <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                 ))}
@@ -94,10 +121,17 @@ const Testimonials = () => {
 
               {/* Author */}
               <div className="flex items-center space-x-3">
+                {!isImageLoaded[index] && (
+                  <div className="w-12 h-12 rounded-full bg-gray-200 animate-pulse" />
+                )}
                 <img
                   src={testimonial.image}
                   alt={testimonial.name}
-                  className="w-12 h-12 rounded-full object-cover"
+                  className={`w-12 h-12 rounded-full object-cover transition-opacity duration-300 ${
+                    isImageLoaded[index] ? 'opacity-100' : 'opacity-0'
+                  }`}
+                  loading="lazy"
+                  onLoad={() => handleImageLoad(index)}
                 />
                 <div>
                   <div className="font-semibold text-gray-900">{testimonial.name}</div>
@@ -109,20 +143,20 @@ const Testimonials = () => {
         </div>
 
         {/* Stats Section */}
-        <div className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-8">
-          <div className="text-center">
+        <div className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-8 animate-fade-in">
+          <div className="text-center" role="listitem">
             <div className="text-3xl lg:text-4xl font-bold text-dental-primary mb-2">98%</div>
             <div className="text-gray-600">Satisfação dos Pacientes</div>
           </div>
-          <div className="text-center">
+          <div className="text-center" role="listitem">
             <div className="text-3xl lg:text-4xl font-bold text-dental-primary mb-2">2000+</div>
             <div className="text-gray-600">Sorrisos Transformados</div>
           </div>
-          <div className="text-center">
+          <div className="text-center" role="listitem">
             <div className="text-3xl lg:text-4xl font-bold text-dental-primary mb-2">15+</div>
             <div className="text-gray-600">Anos de Experiência</div>
           </div>
-          <div className="text-center">
+          <div className="text-center" role="listitem">
             <div className="text-3xl lg:text-4xl font-bold text-dental-primary mb-2">5★</div>
             <div className="text-gray-600">Avaliação Média</div>
           </div>

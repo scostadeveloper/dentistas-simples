@@ -1,4 +1,3 @@
-
 /**
  * Componente Hero - Seção Principal da Landing Page
  * 
@@ -11,12 +10,15 @@
  * - Background com imagem de consultório odontológico
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Star, Shield, Clock } from 'lucide-react';
 import { siteConfig } from '@/config/siteConfig';
 
 const Hero = () => {
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [isDoctorImageLoaded, setIsDoctorImageLoaded] = useState(false);
+
   /**
    * Função para redirecionar usuário para WhatsApp
    * Abre uma nova aba com mensagem pré-definida para agendamento
@@ -39,20 +41,38 @@ const Hero = () => {
     }
   };
 
+  const handleKeyPress = (e: React.KeyboardEvent, action: () => void) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      action();
+    }
+  };
+
   return (
-    <section id="inicio" className="relative min-h-screen flex items-center overflow-hidden">
+    <section 
+      id="inicio" 
+      className="relative min-h-screen flex items-center overflow-hidden"
+      aria-label="Seção inicial"
+    >
       {/* === IMAGEM DE FUNDO === */}
       <div className="absolute inset-0">
+        {!isImageLoaded && (
+          <div className="absolute inset-0 bg-gray-200 animate-pulse" />
+        )}
         <img
           src="https://images.unsplash.com/photo-1609840114035-3c981b782dfe?auto=format&fit=crop&w=1920&q=80"
           alt="Consultório odontológico moderno"
-          className="w-full h-full object-cover"
+          className={`w-full h-full object-cover transition-opacity duration-500 ${
+            isImageLoaded ? 'opacity-100' : 'opacity-0'
+          }`}
+          loading="eager"
+          onLoad={() => setIsImageLoaded(true)}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/85 to-dental-light/80"></div>
       </div>
 
       {/* === ELEMENTOS DECORATIVOS DE FUNDO === */}
-      <div className="absolute inset-0 opacity-5">
+      <div className="absolute inset-0 opacity-5" aria-hidden="true">
         <div className="absolute top-20 left-10 w-32 h-32 bg-dental-primary rounded-full blur-3xl"></div>
         <div className="absolute bottom-20 right-10 w-40 h-40 bg-dental-accent rounded-full blur-3xl"></div>
         <div className="absolute top-1/2 left-1/3 w-24 h-24 bg-dental-secondary rounded-full blur-2xl"></div>
@@ -63,8 +83,12 @@ const Hero = () => {
           {/* === CONTEÚDO PRINCIPAL === */}
           <div className="animate-slide-in-left">
             {/* Badge de qualidade */}
-            <div className="inline-flex items-center space-x-2 bg-dental-accent/10 px-4 py-2 rounded-full mb-6">
-              <Star className="w-4 h-4 text-dental-accent" />
+            <div 
+              className="inline-flex items-center space-x-2 bg-dental-accent/10 px-4 py-2 rounded-full mb-6"
+              role="status"
+              aria-label="Avaliação da clínica"
+            >
+              <Star className="w-4 h-4 text-dental-accent" aria-hidden="true" />
               <span className="text-sm font-medium text-dental-primary">Clínica 5 Estrelas</span>
             </div>
 
@@ -86,45 +110,49 @@ const Hero = () => {
             <div className="flex flex-col sm:flex-row gap-4 mb-8">
               <Button 
                 size="lg" 
-                className="bg-gradient-to-r from-dental-primary to-dental-secondary hover:from-dental-secondary hover:to-dental-primary text-white px-8 py-3"
+                className="bg-gradient-to-r from-dental-primary to-dental-secondary hover:from-dental-secondary hover:to-dental-primary text-white px-8 py-3 transition-all duration-300 transform hover:scale-105"
                 onClick={handleWhatsAppClick}
+                onKeyDown={(e) => handleKeyPress(e, handleWhatsAppClick)}
+                aria-label="Agendar avaliação via WhatsApp"
               >
                 Agendar Avaliação
               </Button>
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="border-dental-primary text-dental-primary hover:bg-dental-primary hover:text-white px-8 py-3"
+                className="border-dental-primary text-dental-primary hover:bg-dental-primary hover:text-white px-8 py-3 transition-all duration-300 transform hover:scale-105"
                 onClick={handleScrollToServices}
+                onKeyDown={(e) => handleKeyPress(e, handleScrollToServices)}
+                aria-label="Ver tratamentos disponíveis"
               >
                 Conhecer Tratamentos
               </Button>
             </div>
 
             {/* === ESTATÍSTICAS DA CLÍNICA === */}
-            <div className="grid grid-cols-3 gap-6">
+            <div className="grid grid-cols-3 gap-6" role="list" aria-label="Estatísticas da clínica">
               {/* Anos de experiência */}
-              <div className="text-center">
+              <div className="text-center" role="listitem">
                 <div className="flex items-center justify-center w-12 h-12 bg-dental-accent/10 rounded-full mb-2 mx-auto">
-                  <Shield className="w-6 h-6 text-dental-accent" />
+                  <Shield className="w-6 h-6 text-dental-accent" aria-hidden="true" />
                 </div>
                 <div className="text-2xl font-bold text-dental-primary">{siteConfig.clinicInfo.yearsOfExperience}+</div>
                 <div className="text-sm text-gray-600">Anos de Experiência</div>
               </div>
 
               {/* Pacientes satisfeitos */}
-              <div className="text-center">
+              <div className="text-center" role="listitem">
                 <div className="flex items-center justify-center w-12 h-12 bg-dental-secondary/10 rounded-full mb-2 mx-auto">
-                  <Star className="w-6 h-6 text-dental-secondary" />
+                  <Star className="w-6 h-6 text-dental-secondary" aria-hidden="true" />
                 </div>
                 <div className="text-2xl font-bold text-dental-primary">{siteConfig.clinicInfo.patientsServed}+</div>
                 <div className="text-sm text-gray-600">Pacientes Satisfeitos</div>
               </div>
 
               {/* Atendimento de emergência */}
-              <div className="text-center">
+              <div className="text-center" role="listitem">
                 <div className="flex items-center justify-center w-12 h-12 bg-dental-primary/10 rounded-full mb-2 mx-auto">
-                  <Clock className="w-6 h-6 text-dental-primary" />
+                  <Clock className="w-6 h-6 text-dental-primary" aria-hidden="true" />
                 </div>
                 <div className="text-2xl font-bold text-dental-primary">24h</div>
                 <div className="text-sm text-gray-600">Emergências</div>
@@ -135,14 +163,25 @@ const Hero = () => {
           {/* === IMAGEM DO PROFISSIONAL === */}
           <div className="relative animate-fade-in">
             <div className="relative z-10">
+              {!isDoctorImageLoaded && (
+                <div className="absolute inset-0 bg-gray-200 animate-pulse rounded-2xl" />
+              )}
               <img
                 src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=800&q=80"
                 alt="Dentista profissional sorrindo"
-                className="rounded-2xl shadow-2xl w-full h-[600px] object-cover"
+                className={`rounded-2xl shadow-2xl w-full h-[600px] object-cover transition-opacity duration-500 ${
+                  isDoctorImageLoaded ? 'opacity-100' : 'opacity-0'
+                }`}
+                loading="eager"
+                onLoad={() => setIsDoctorImageLoaded(true)}
               />
               
               {/* Card flutuante com informações do profissional */}
-              <div className="absolute -bottom-6 -left-6 bg-white rounded-xl p-6 shadow-xl border border-gray-100">
+              <div 
+                className="absolute -bottom-6 -left-6 bg-white rounded-xl p-6 shadow-xl border border-gray-100"
+                role="complementary"
+                aria-label="Informações do profissional"
+              >
                 <div className="flex items-center space-x-4">
                   <div className="w-12 h-12 bg-gradient-to-r from-dental-primary to-dental-secondary rounded-full flex items-center justify-center text-white font-bold text-lg">
                     {siteConfig.mainDoctor.prefix}
@@ -156,7 +195,7 @@ const Hero = () => {
             </div>
 
             {/* Elemento decorativo de fundo */}
-            <div className="absolute -top-6 -right-6 w-72 h-72 bg-gradient-to-r from-dental-accent to-dental-secondary opacity-20 rounded-full blur-3xl"></div>
+            <div className="absolute -top-6 -right-6 w-72 h-72 bg-gradient-to-r from-dental-accent to-dental-secondary opacity-20 rounded-full blur-3xl" aria-hidden="true"></div>
           </div>
         </div>
       </div>
